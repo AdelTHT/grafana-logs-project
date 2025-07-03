@@ -40,7 +40,7 @@ Chaque rôle contient les sous-dossiers suivants :
 
 1. Clonez le dépôt :
    ```bash
-   git clone <URL-du-dépôt>
+   git clone https://github.com/AdelTHT/grafana-logs-project.git
    cd M1IL-Ansible-25
    ```
 
@@ -50,6 +50,14 @@ Chaque rôle contient les sous-dossiers suivants :
    ```
 
 3. Vérifiez les résultats dans les outils déployés (Grafana, Loki, etc.).
+   ⚠️ L’environnement est disponible jusqu’au 10 juillet 2025 à 23h59.
+
+  URL : http://15.188.10.115:3000/d/8606ea3d-ae12-4a23-85e4-3158219fc350/new-dashboard
+
+  Identifiants : admin / admin
+
+  💡 Passée cette date, il faudra prévoir de recréer une instance EC2, adapter les IPs dans le fichier inventories/lab-ipi-m1il.yml et redéployer les playbooks avec Ansible.
+     
 
 ## Auteur
 Adel
