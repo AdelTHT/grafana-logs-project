@@ -1,0 +1,47 @@
+- name: Créer répertoire Loki
+  file:
+    path: /etc/loki
+    state: directory
+    mode: '0755'
+
+- name: Télécharger binaire Loki
+  get_url:
+    url: https://github.com/grafana/loki/releases/latest/download/loki-linux-amd64.zip
+    dest: /tmp/loki.zip
+
+- name: Installer unzip
+  apt:
+    name: unzip
+    state: present
+
+- name: Dézipper Loki
+  unarchive:
+    src: /tmp/loki.zip
+    dest: /usr/local/bin/
+    remote_src: yes
+
+- name: Donner les droits d’exécution
+  file:
+    path: /usr/local/bin/loki-linux-amd64
+    mode: '0755'
+
+- name: Renommer le binaire
+  command: mv /usr/local/bin/loki-linux-amd64 /usr/local/bin/loki
+  args:
+    creates: /usr/local/bin/loki
+
+- name: Copier config Loki
+  copy:
+    src: loki-config.yaml
+    dest: /etc/loki/loki-config.yaml
+
+- name: Créer le service Loki
+  template:
+    src: loki.service.j2
+    dest: /etc/systemd/system/loki.service
+
+- name: Démarrer et activer Loki
+  systemd:
+    name: loki
+    enabled: yes
+    state: started

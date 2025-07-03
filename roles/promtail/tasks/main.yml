@@ -1,0 +1,49 @@
+---
+- name: Créer dossier Promtail
+  file:
+    path: /etc/promtail
+    state: directory
+    mode: '0755'
+
+- name: Télécharger Promtail
+  get_url:
+    url: https://github.com/grafana/loki/releases/latest/download/promtail-linux-amd64.zip
+    dest: /tmp/promtail.zip
+
+- name: Installer unzip
+  apt:
+    name: unzip
+    state: present
+
+- name: Dézipper Promtail
+  unarchive:
+    src: /tmp/promtail.zip
+    dest: /usr/local/bin/
+    remote_src: yes
+
+- name: Rendre promtail exécutable
+  file:
+    path: /usr/local/bin/promtail-linux-amd64
+    mode: '0755'
+
+- name: Renommer promtail
+  command: mv /usr/local/bin/promtail-linux-amd64 /usr/local/bin/promtail
+  args:
+    creates: /usr/local/bin/promtail
+
+- name: Copier la config promtail
+  copy:
+    src: promtail-config.yaml
+    dest: /etc/promtail/promtail.yaml
+
+- name: Installer promtail.service
+  template:
+    src: promtail.service.j2
+    dest: /etc/systemd/system/promtail.service
+
+- name: Démarrer promtail
+  systemd:
+    name: promtail
+    enabled: yes
+    state: started
+

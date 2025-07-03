@@ -1,0 +1,12 @@
+---
+# defaults file for loki
+loki_version: "2.4.1"
+loki_package_url: "https://github.com/grafana/loki/releases/download/v{{ loki_version }}/loki-linux-amd64.zip"
+loki_install_dir: "/opt/loki"
+loki_user: "loki"
+loki_group: "loki"
+loki_config_dir: "/etc/loki"
+loki_data_dir: "/var/loki"
+loki_service_name: "loki"
+loki_config_file: /etc/loki/loki-config.yaml
+

@@ -1,0 +1,67 @@
+---
+- name: Create Prometheus group
+  ansible.builtin.group:
+    name: "{{ prometheus_group }}"
+    state: present
+
+- name: Create Prometheus user
+  ansible.builtin.user:
+    name: "{{ prometheus_user }}"
+    group: "{{ prometheus_group }}"
+    create_home: no
+    shell: /sbin/nologin
+
+- name: Download Prometheus package
+  ansible.builtin.get_url:
+    url: "{{ prometheus_package_url }}"
+    dest: "/tmp/prometheus-{{ prometheus_version }}.tar.gz"
+    mode: '0644'
+
+- name: Extract Prometheus package
+  ansible.builtin.unarchive:
+    src: "/tmp/prometheus-{{ prometheus_version }}.tar.gz"
+    dest: "/opt/"
+    remote_src: yes
+
+- name: Create Prometheus directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_group }}"
+    mode: '0755'
+  loop:
+    - "{{ prometheus_data_dir }}"
+    - "{{ prometheus_config_dir }}"
+    - "/etc/prometheus"  
+
+- name: Copy Prometheus configuration file
+  ansible.builtin.template:
+    src: prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+    owner: prometheus
+    group: prometheus
+    mode: '0644'
+
+- name: Install Prometheus binary files
+  ansible.builtin.copy:
+    src: "/opt/prometheus-{{ prometheus_version }}.linux-amd64/"
+    dest: "/usr/local/bin/"
+    remote_src: yes
+    mode: '0755'
+
+- name: Create Prometheus service file
+  ansible.builtin.template:
+    src: "prometheus.service.j2"
+    dest: "/etc/systemd/system/{{ prometheus_service_name }}.service"
+    mode: '0644'
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Start Prometheus service
+  ansible.builtin.systemd:
+    name: "{{ prometheus_service_name }}"
+    state: started
+    enabled: yes

@@ -1,0 +1,5 @@
+---
+- hosts: adel
+  become: true
+  roles:
+    - grafana

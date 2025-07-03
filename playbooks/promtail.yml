@@ -1,0 +1,6 @@
+---
+- hosts: adel
+  become: true
+  roles:
+    - loki
+    - promtail

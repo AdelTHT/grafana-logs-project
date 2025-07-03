@@ -1,0 +1,9 @@
+---
+prometheus_group: prometheus
+prometheus_user: prometheus
+prometheus_version: "2.52.0"
+prometheus_package_url: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
+prometheus_data_dir: /var/lib/prometheus
+prometheus_config_dir: /etc/prometheus
+prometheus_config_file: /etc/prometheus/prometheus.yml
+prometheus_service_name: prometheus
